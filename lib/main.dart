@@ -23,7 +23,16 @@ class HomePage extends StatefulWidget {
   }
 }
 
-class HomePageState extends State<HomePage> {
+class HomePageState extends State<HomePage> with SingleTickerProviderStateMixin{
+  initState() {
+    super.initState();
+    controller = AnimationController(
+        duration: const Duration(milliseconds: 2000), vsync: this, value: 0.1);
+    animation = CurvedAnimation(parent: controller, curve: Curves.bounceInOut);
+
+    controller.forward();
+  }
+
   HomePageState() {
     initOpacity();
     initMatrix();
@@ -66,13 +75,19 @@ class HomePageState extends State<HomePage> {
   int won = 0;
   AnimationController controller;
   List<List> opacity;
+  Animation <double> animation ;
 
   @override
 
+  dispose() {
+    controller.dispose();
+    super.dispose();
+  }
 
 
   Widget build(BuildContext context) {
     var textHeight = MediaQuery.of(context).size.height;
+    animation =  CurvedAnimation(parent: controller, curve: Curves.bounceInOut);
 
     return Scaffold(
         backgroundColor: Colors.black54,
@@ -144,6 +159,7 @@ class HomePageState extends State<HomePage> {
       onTap: () {
         changeMatrixField(i, j);
         checkWinner(i, j);
+        controller.forward();
       },
       child: Container(
         margin: EdgeInsets.fromLTRB(12, 8, 8, 8),
@@ -157,13 +173,17 @@ class HomePageState extends State<HomePage> {
               color: Colors.white,
             )),
         child: Center(
-          child: AnimatedOpacity(
-            opacity: opacity[i][j],
-            duration: Duration(milliseconds: 700),
-            child: Icon(
-              matrix[i][j],
-              color: Colors.white,
-              size: 80,
+          child: ScaleTransition(
+            scale: animation,
+            alignment: Alignment.center,
+            child: AnimatedOpacity(
+              opacity: opacity[i][j],
+              duration: Duration(milliseconds: 700),
+              child: Icon(
+                matrix[i][j],
+                color: Colors.white,
+                size: 80,
+              ),
             ),
           ),
         ),

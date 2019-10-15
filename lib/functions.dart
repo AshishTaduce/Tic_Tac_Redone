@@ -7,4 +7,3 @@ IconData choice = Icons.clear;
 int won = 0;
 AnimationController controller;
 double opacity = 1;
-
