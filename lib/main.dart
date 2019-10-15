@@ -25,7 +25,7 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   HomePageState() {
-
+    initOpacity();
     initMatrix();
     initColor();
   }
@@ -50,7 +50,26 @@ class HomePageState extends State<HomePage> {
     }
   }
 
+  initOpacity() {
+    opacity = List<List>(3);
+    for (var i = 0; i < opacity.length; i++) {
+      opacity[i] = List(3);
+      for (var j = 0; j < opacity[i].length; j++) {
+        opacity[i][j] = 0.0;
+      }
+    }
+  }
+
+  List<List> matrix;
+  List<List> boxColor;
+  IconData choice = Icons.clear;
+  int won = 0;
+  AnimationController controller;
+  List<List> opacity;
+
   @override
+
+
 
   Widget build(BuildContext context) {
     var textHeight = MediaQuery.of(context).size.height;
@@ -139,8 +158,8 @@ class HomePageState extends State<HomePage> {
             )),
         child: Center(
           child: AnimatedOpacity(
-            opacity: opacity,
-            duration: Duration(seconds: 5),
+            opacity: opacity[i][j],
+            duration: Duration(milliseconds: 700),
             child: Icon(
               matrix[i][j],
               color: Colors.white,
@@ -156,22 +175,17 @@ class HomePageState extends State<HomePage> {
           () {
         if (matrix[i][j] == null) {
           if (choice == Icons.clear){
-            print(opacity);
-            //opacity = 0;
             matrix[i][j] = FontAwesomeIcons.circle;
-            print(opacity);
-            //opacity = 1;
-            print(opacity);
+            opacity[i][j]= 1.0;
           }
           else{
-            //opacity = 0;
             matrix[i][j] = Icons.clear;
-            //opacity = 1;
+            opacity[i][j]= 1.0;
           }
 
 
           choice = matrix[i][j];
-          opacity = 1.0;
+
         }
       },
     );
