@@ -25,6 +25,7 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   HomePageState() {
+
     initMatrix();
     initColor();
   }
@@ -53,6 +54,7 @@ class HomePageState extends State<HomePage> {
 
   Widget build(BuildContext context) {
     var textHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
         backgroundColor: Colors.black54,
         appBar: AppBar(
@@ -136,10 +138,14 @@ class HomePageState extends State<HomePage> {
               color: Colors.white,
             )),
         child: Center(
-          child: Icon(
-            matrix[i][j],
-            color: Colors.white,
-            size: 80,
+          child: AnimatedOpacity(
+            opacity: opacity,
+            duration: Duration(seconds: 5),
+            child: Icon(
+              matrix[i][j],
+              color: Colors.white,
+              size: 80,
+            ),
           ),
         ),
       ),
@@ -149,12 +155,23 @@ class HomePageState extends State<HomePage> {
     setState(
           () {
         if (matrix[i][j] == null) {
-          if (choice == Icons.clear)
+          if (choice == Icons.clear){
+            print(opacity);
+            //opacity = 0;
             matrix[i][j] = FontAwesomeIcons.circle;
-          else
+            print(opacity);
+            //opacity = 1;
+            print(opacity);
+          }
+          else{
+            //opacity = 0;
             matrix[i][j] = Icons.clear;
+            //opacity = 1;
+          }
+
 
           choice = matrix[i][j];
+          opacity = 1.0;
         }
       },
     );
