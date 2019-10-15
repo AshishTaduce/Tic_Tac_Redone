@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'functions.dart';
 
 void main() => runApp(App());
 
@@ -18,18 +17,19 @@ class App extends StatelessWidget {
 class HomePage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return HomePageState();
+    return _HomePageState();
 
   }
 }
 
-class HomePageState extends State<HomePage> {
-  HomePageState() {
-    initMatrix();
-    initColor();
+class _HomePageState extends State<HomePage> {
+  List<List> matrix;
+
+  _HomePageState() {
+    _initMatrix();
   }
 
-  initMatrix() {
+  _initMatrix() {
     matrix = List<List>(3);
     for (var i = 0; i < matrix.length; i++) {
       matrix[i] = List(3);
@@ -39,20 +39,10 @@ class HomePageState extends State<HomePage> {
     }
   }
 
-  initColor() {
-    boxColor = List<List>(3);
-    for (var i = 0; i < boxColor.length; i++) {
-      boxColor[i] = List(3);
-      for (var j = 0; j < boxColor[i].length; j++) {
-        boxColor[i][j] = Colors.white.withAlpha(150);
-      }
-    }
-  }
-
   @override
-
   Widget build(BuildContext context) {
     var textHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
         backgroundColor: Colors.black54,
         appBar: AppBar(
@@ -74,7 +64,7 @@ class HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(
-                  height: textHeight * 0.10,
+                  height: textHeight  * 0.10,
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -101,8 +91,7 @@ class HomePageState extends State<HomePage> {
                   color: Colors.white.withAlpha(150),
                   onPressed: () {
                     setState(() {
-                      initMatrix();
-                      initColor();
+                      _initMatrix();
                     });
                   },
                   child: Text(
@@ -118,18 +107,58 @@ class HomePageState extends State<HomePage> {
           ),
         ));
   }
-  buildElement(int i, int j) {
+
+  Column buildGrid() {
+    return Column(
+      children: <Widget>[
+        Row(
+          // mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _buildElement(0, 0),
+            _buildElement(0, 1),
+            _buildElement(0, 2),
+          ],
+        ),
+        Row(
+          // mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _buildElement(1, 0),
+            _buildElement(1, 1),
+            _buildElement(1, 2),
+          ],
+        ),
+        Row(
+          // mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _buildElement(2, 0),
+            _buildElement(2, 1),
+            _buildElement(2, 2),
+          ],
+        ),
+      ],
+    );
+  }
+
+  IconData choice = Icons.clear;
+
+  _buildElement(int i, int j) {
     return GestureDetector(
       onTap: () {
-        changeMatrixField(i, j);
-        checkWinner(i, j);
+        _changeMatrixField(i, j);
+        _checkWinner(i, j);
       },
       child: Container(
         margin: EdgeInsets.fromLTRB(12, 8, 8, 8),
         width: 90.0,
         height: 90.0,
         decoration: BoxDecoration(
-            color: boxColor[i][j],
+            color: Colors.white.withAlpha(150),
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.all(Radius.circular(4)),
             border: Border.all(
@@ -145,7 +174,8 @@ class HomePageState extends State<HomePage> {
       ),
     );
   }
-  changeMatrixField(int i, int j) {
+
+  _changeMatrixField(int i, int j) {
     setState(
           () {
         if (matrix[i][j] == null) {
@@ -159,11 +189,9 @@ class HomePageState extends State<HomePage> {
       },
     );
   }
-  checkWinner(int x, int y) {
-    var col = 0,
-        row = 0,
-        diag = 0,
-        rdiag = 0;
+
+  _checkWinner(int x, int y) {
+    var col = 0, row = 0, diag = 0, rdiag = 0;
     var n = matrix.length - 1;
     var player = matrix[x][y];
 
@@ -173,69 +201,11 @@ class HomePageState extends State<HomePage> {
       if (matrix[i][i] == player) diag++;
       if (matrix[i][n - i] == player) rdiag++;
     }
-    if (col == n + 1 || row == n + 1 || diag == n + 1 || rdiag == n + 1) {
+    if (row == n + 1 || col == n + 1 || diag == n + 1 || rdiag == n + 1) {
       print('$player won');
-      won = 1;
-      if (row == n + 1) {
-        for (int i = 0; i < matrix.length; i++) {
-          boxColor[i][y] = Colors.lightGreen;
-        }
-      }
-
-      else if (col == n + 1) {
-        for (int i = 0; i < matrix.length; i++) {
-          boxColor[x][i] = Colors.lightGreen;
-        }
-      }
-
-      else if (diag == n + 1) {
-        for (int i = 0; i < matrix.length; i++) {
-          boxColor[i][i] = Colors.lightGreen;
-        }
-      }
-
-      else if (rdiag == n + 1) {
-        for (int i = 0; i < matrix.length; i++) {
-          boxColor[i][n - i] = Colors.lightGreen;
-        }
-      }
+      _initMatrix();
     }
   }
-  Column buildGrid() {
-    return Column(
-      children: <Widget>[
-        Row(
-          // mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            buildElement(0, 0),
-            buildElement(0, 1),
-            buildElement(0, 2),
-          ],
-        ),
-        Row(
-          // mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            buildElement(1, 0),
-            buildElement(1, 1),
-            buildElement(1, 2),
-          ],
-        ),
-        Row(
-          // mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            buildElement(2, 0),
-            buildElement(2, 1),
-            buildElement(2, 2),
-          ],
-        ),
-      ],
-    );
-  }
+
 
 }
